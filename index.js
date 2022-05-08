@@ -85,5 +85,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("warehouse managment running", port);
+    console.log("warehouse managment website running", port);
 });
