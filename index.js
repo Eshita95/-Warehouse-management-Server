@@ -81,9 +81,9 @@ run().catch(console.dir)
 
 
 app.get("/", (req, res) => {
-    res.send("warehouse managment running")
+    res.send("warehouse managment running");
 });
 
 app.listen(port, () => {
-    console.log("warehouse managment running", port)
+    console.log("warehouse managment running", port);
 });
