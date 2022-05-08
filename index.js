@@ -17,52 +17,60 @@ async function run() {
     try {
         await client.connect();
         const warehouseConnection = client.db("warehouse").collection("services")
-        app.get('/service', async(req, res) =>{
-            console.log('query',req.body)
+        app.get('/service', async (req, res) => {
+            console.log('query', req.body)
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size)
-      
+
             const query = {};
             const cursor = warehouseConnection.find(query);
             let services;
-            if(page || size){
-              services = await cursor.skip(page * size).limit(size).toArray();
+            if (page || size) {
+                services = await cursor.skip(page * size).limit(size).toArray();
             }
-            else{
-              services = await cursor.toArray()
+            else {
+                services = await cursor.toArray()
             }
-            
+
             res.send(services);
-          })
-      
-      
-          app.get('/productCount', async (req, res) => {
+        })
+
+
+        app.get('/productCount', async (req, res) => {
             const count = await warehouseConnection.estimatedDocumentCount();
             res.send({ count });
-          });
-          app.get('/service/:id', async (req, res) => {
+        });
+        app.get('/service/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await warehouseConnection.findOne(query)
             res.send(result)
-          })
-          // update
-          app.put('/service/:id', async (req, res) => {
+        })
+        // update
+        app.put('/service/:id', async (req, res) => {
+
             const id = req.params.id;
             const update = req.body;
             const filter = { _id: ObjectId(id) };
             const option = { upsert: true };
             const updateService = {
-              $set: {
-                name: update.name,
-                price: update.price,
-                quantity: update.quantity,
-                description: update.description,
-              }
+                $set: {
+                    image: update.image,
+                    name: update.name,
+                    price: update.price,
+                    quantity: update.quantity,
+                    description: update.description,
+                }
             }
-            const result = await warehouseConnection.updateOne(filter,updateService,option);
+            const result = await warehouseConnection.updateOne(filter, updateService, option);
             res.send(result);
-          })
+        })
+        app.post('/service', async (req, res) => {
+            const newItem = req.body;
+            console.log('adding new user', newItem);
+            const result = await warehouseConnection.insertOne(newItem)
+            res.send(result)
+        })
     }
     finally {
 
